@@ -1,11 +1,11 @@
 import { MainPage } from './pages/MainPage'
-import { DesireServiceProvider } from './services/DesireServiceContext'
+import { AppServicesProvider } from './services/AppServicesContext'
 
 function App() {
   return (
-    <DesireServiceProvider>
+    <AppServicesProvider>
       <MainPage />
-    </DesireServiceProvider>
+    </AppServicesProvider>
   )
 }
 

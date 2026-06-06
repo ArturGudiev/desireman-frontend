@@ -1,12 +1,20 @@
 import { useState, type FormEvent } from 'react'
 
-interface AddDesireDialogProps {
+interface AddItemDialogProps {
   open: boolean
+  title: string
+  namePlaceholder: string
   onClose: () => void
   onSubmit: (name: string, tags: string[]) => Promise<void>
 }
 
-export function AddDesireDialog({ open, onClose, onSubmit }: AddDesireDialogProps) {
+export function AddItemDialog({
+  open,
+  title,
+  namePlaceholder,
+  onClose,
+  onSubmit,
+}: AddItemDialogProps) {
   const [name, setName] = useState('')
   const [tagsInput, setTagsInput] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -37,7 +45,7 @@ export function AddDesireDialog({ open, onClose, onSubmit }: AddDesireDialogProp
       setTagsInput('')
       onClose()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add desire')
+      setError(err instanceof Error ? err.message : 'Failed to add item')
     } finally {
       setSubmitting(false)
     }
@@ -48,10 +56,10 @@ export function AddDesireDialog({ open, onClose, onSubmit }: AddDesireDialogProp
       <div
         className="dialog"
         role="dialog"
-        aria-labelledby="add-desire-title"
+        aria-labelledby="add-item-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 id="add-desire-title">Add desire</h2>
+        <h2 id="add-item-title">{title}</h2>
         <form onSubmit={handleSubmit}>
           <label>
             Name
@@ -59,7 +67,7 @@ export function AddDesireDialog({ open, onClose, onSubmit }: AddDesireDialogProp
               type="text"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              placeholder="What do you desire?"
+              placeholder={namePlaceholder}
               autoFocus
             />
           </label>

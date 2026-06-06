@@ -1,4 +1,17 @@
-import type { Desire, DesireToday } from '../models/desire.types'
+interface ItemRecord {
+  id: number
+  happenedAt: string
+}
+
+interface Item {
+  id: number
+  name: string
+  tags: string[]
+}
+
+interface ItemToday extends Item {
+  records: ItemRecord[]
+}
 
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString([], {
@@ -7,23 +20,27 @@ function formatTime(iso: string): string {
   })
 }
 
-interface DesireTableProps {
+interface ItemTableProps {
+  kind: 'desires' | 'necessities'
   view: 'today' | 'all'
-  todayItems: DesireToday[]
-  allItems: Desire[]
+  todayItems: ItemToday[]
+  allItems: Item[]
   loading: boolean
   addingRecordId: number | null
-  onAddRecord: (desireId: number) => void
+  onAddRecord: (id: number) => void
 }
 
-export function DesireTable({
+export function ItemTable({
+  kind,
   view,
   todayItems,
   allItems,
   loading,
   addingRecordId,
   onAddRecord,
-}: DesireTableProps) {
+}: ItemTableProps) {
+  const label = kind === 'desires' ? 'desire' : 'necessity'
+
   if (loading) {
     return <p className="status">Loading…</p>
   }
@@ -35,8 +52,8 @@ export function DesireTable({
     return (
       <p className="status empty">
         {isToday
-          ? 'No desires recorded today yet.'
-          : 'No desires yet. Add one with the + button.'}
+          ? `No ${label}s recorded today yet.`
+          : `No ${label}s yet. Add one with the + button.`}
       </p>
     )
   }
@@ -54,12 +71,12 @@ export function DesireTable({
         </thead>
         <tbody>
           {isToday
-            ? todayItems.map((desire) => (
-                <tr key={desire.id}>
-                  <td>{desire.name}</td>
+            ? todayItems.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
                   <td>
                     <div className="tags">
-                      {desire.tags.map((tag) => (
+                      {item.tags.map((tag) => (
                         <span key={tag} className="tag">
                           {tag}
                         </span>
@@ -68,10 +85,10 @@ export function DesireTable({
                   </td>
                   <td>
                     <div className="records">
-                      {desire.records.length === 0 ? (
+                      {item.records.length === 0 ? (
                         <span className="muted">—</span>
                       ) : (
-                        desire.records.map((record) => (
+                        item.records.map((record) => (
                           <span key={record.id} className="record-time">
                             {formatTime(record.happenedAt)}
                           </span>
@@ -84,21 +101,21 @@ export function DesireTable({
                       type="button"
                       className="icon-btn"
                       title="Add record"
-                      aria-label={`Add record for ${desire.name}`}
-                      disabled={addingRecordId === desire.id}
-                      onClick={() => onAddRecord(desire.id)}
+                      aria-label={`Add record for ${item.name}`}
+                      disabled={addingRecordId === item.id}
+                      onClick={() => onAddRecord(item.id)}
                     >
                       +
                     </button>
                   </td>
                 </tr>
               ))
-            : allItems.map((desire) => (
-                <tr key={desire.id}>
-                  <td>{desire.name}</td>
+            : allItems.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
                   <td>
                     <div className="tags">
-                      {desire.tags.map((tag) => (
+                      {item.tags.map((tag) => (
                         <span key={tag} className="tag">
                           {tag}
                         </span>
@@ -110,9 +127,9 @@ export function DesireTable({
                       type="button"
                       className="icon-btn"
                       title="Add record"
-                      aria-label={`Add record for ${desire.name}`}
-                      disabled={addingRecordId === desire.id}
-                      onClick={() => onAddRecord(desire.id)}
+                      aria-label={`Add record for ${item.name}`}
+                      disabled={addingRecordId === item.id}
+                      onClick={() => onAddRecord(item.id)}
                     >
                       +
                     </button>
